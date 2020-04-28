@@ -67,3 +67,45 @@ df['mean'] = df.mean(axis=1)
 #or to find the standard deviation vertically
 
 df.std(axis=0)
+
+
+
+#Converting a DataFrame to a Numpy Array
+#Converting the the values in a DataFrame to an array is simple
+
+df.values
+#If you want to preserve the table presentation
+
+df.as_matrix
+#Combining DataFrames with Concatenation
+#You can concatenate rows or columns together, the only requirement is that the shape is the same on corresponding axis. To concat rows vertically:
+
+pd.concat([df_1, df_2], axis=0)
+#Or to concat columns horizontally:
+
+pd.concat([df_1, df_2], axis=1)
+#Combining DataFrames based on an Index Key
+#Merging in Pandas works just like SQL. If you you have two DataFrames that share a key, perhaps a pizza ‘order_id’, you can perform inner, outer, left, right joins just like you would in SQL.
+
+merged_df = df_1.merge(df_2, how='left', on='order_id')
+#Converting Dates to their own Day, Week, Month, Year Columns
+#First, make sure the data is in datetime format. Then use dt method to extract the data you need.
+
+date = pd.to_datetime(df.date)
+df['weekday'] = date.dt.weekday
+df['year'] = date.dt.year
+#Finding NaNs in a DataFrame
+#Count the total number of NaNs present:
+df.isnull().sum().sum()
+#List the NaN count for each column:
+df.isnull().sum()
+#Filling NaNs or Missing Data
+#Most machine learning algorithms do not like NaN values, so you’ll probably need to convert them. If the topping column is missing some values, we can fill them a default value.
+df.topping = df.topping.fillna('Cheese')
+#or we can drop any row missing data across the entire DataFrame:
+df = df.dropna(axis=0)
+#Extracting Features by Grouping Columns
+#Grouping columns is a great way to extract features from data. This is especially useful when you have data that can be counted or quantified in some way. For example, you might have group pizzas by topping, then calculate the mean for price in each group.
+df.groupby('topping')['discount'].apply(lambda x: np.mean(x))
+#or maybe you want to see the count of a certain value
+df.groupby('topping')['discount'].apply(lambda x: x.count())
